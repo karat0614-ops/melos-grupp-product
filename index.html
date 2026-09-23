@@ -17,6 +17,8 @@
   .sub { color:var(--muted); font-size:18px; margin:0 0 24px; }
   .btn { display:inline-block; background:var(--accent); color:#fff; padding:14px 26px; border-radius:8px; text-decoration:none; font-weight:600; }
   .btn.ghost { background:#fff; color:var(--ink); border:1px solid var(--line); }
+  .actions { display:flex; flex-wrap:wrap; gap:10px; }
+  .contacts { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:18px; }
 
   section { padding:28px 0; border-top:1px solid var(--line); }
   h2 { font-size:20px; margin:0 0 14px; }
@@ -70,7 +72,10 @@
       Не «пришлите чертёж, посчитаем завтра». Называем ориентир по размерам сразу,
       дальше согласуем детали в Telegram.
     </p>
-    <a class="btn" href="#zayavka">Узнать цену сегодня</a>
+    <div class="actions">
+      <a class="btn" href="https://t.me/melos_grupp">Написать в Telegram</a>
+      <a class="btn ghost" href="tel:+70000000000">Позвонить</a>
+    </div>
   </div>
 </header>
 
@@ -162,6 +167,14 @@
       Материал, толщина, примерные размеры и количество — этого хватит для ориентира.
       Ответим в тот же вечер: цена и срок.
     </p>
+
+    <div class="contacts">
+      <a class="btn" href="https://t.me/melos_grupp">Написать в Telegram</a>
+      <a class="btn ghost" href="tel:+70000000000">Позвонить: +7 000 000-00-00</a>
+    </div>
+
+    <p class="promise">Или заполните форму — перенесём данные в переписку сами.</p>
+
     <form id="lead" novalidate>
       <div class="field">
         <label for="name">Как к вам обращаться</label>
@@ -175,26 +188,51 @@
         <label for="task">Что нужно порезать</label>
         <textarea id="task" rows="3" placeholder="Например: нержавейка 3 мм, кронштейны, 20 шт, к пятнице"></textarea>
       </div>
-      <button type="submit">Отправить и получить расчёт</button>
-      <div class="sent" id="sent">Заявка принята. Ответим в тот же вечер.</div>
+      <button type="submit">Подготовить сообщение</button>
+      <div class="sent" id="sent">
+        Форма пока не отправляет заявку сама — скопируйте текст ниже
+        и пришлите его в Telegram или продиктуйте по телефону.
+        <textarea id="draft" rows="4" style="margin-top:10px;background:#fff"></textarea>
+        <a class="btn" style="margin-top:10px" href="https://t.me/melos_grupp">Открыть Telegram</a>
+      </div>
     </form>
     <div class="flag">
-      <b>УТОЧНИТЬ:</b> форма пока не отправляет заявку — показывает подтверждение.
-      Приём заявок включается подключением бота из <code>bot/</code> к Telegram (шаг 6 плана).
-      До этого момента вместо формы ставим прямую ссылку на Telegram.
+      <b>УТОЧНИТЬ:</b> телефон и адрес Telegram на странице — заглушки, заменить на настоящие.
+      Форма намеренно не отправляет заявку сама: она готовит текст для переписки.
+      Автоматический приём включится, когда бот из <code>bot/</code> будет подключён
+      к Telegram (шаг 6 плана).
     </div>
   </div>
 </section>
 
 <footer>
-  <div class="wrap">Melos Grupp · Лазерная резка металла · Санкт-Петербург</div>
+  <div class="wrap">
+    Melos Grupp · Лазерная резка металла · Санкт-Петербург<br>
+    <a href="tel:+70000000000">+7 000 000-00-00</a> ·
+    <a href="https://t.me/melos_grupp">Telegram</a>
+    <!-- УТОЧНИТЬ: контакты-заглушки -->
+  </div>
 </footer>
 
 <script>
+  /* Форма не отправляет заявку на сервер — и не делает вид, что отправляет.
+     Она собирает введённое в готовый текст, который клиент пересылает
+     в Telegram или диктует по телефону. Настоящий приём заявок включится,
+     когда бот из bot/ будет подключён к Telegram (шаг 6 плана). */
   document.getElementById('lead').addEventListener('submit', function (e) {
     e.preventDefault();
+
+    var name = document.getElementById('name').value.trim();
+    var contact = document.getElementById('contact').value.trim();
+    var task = document.getElementById('task').value.trim();
+
+    var draft = 'Здравствуйте! Нужен расчёт лазерной резки.\n';
+    if (task) draft += 'Что порезать: ' + task + '\n';
+    if (name) draft += 'Меня зовут: ' + name + '\n';
+    if (contact) draft += 'Связь: ' + contact;
+
+    document.getElementById('draft').value = draft.trim();
     document.getElementById('sent').style.display = 'block';
-    e.target.querySelector('button').textContent = 'Отправлено';
   });
 </script>
 
